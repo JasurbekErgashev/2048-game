@@ -1,29 +1,14 @@
 const express = require('express');
-const http = require('http');
-const socketIO = require('socket.io');
-
+const path = require('path');
 const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+const port = 3000;
 
-// Serve static files from public directory
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Handle socket connections
-io.on('connection', (socket) => {
-    console.log('A user connected');
-
-    socket.on('playerMove', (data) => {
-        // Broadcast player movement to other players
-        socket.broadcast.emit('playerMoved', data);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
-    });
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(port, () => {
+    console.log(`2048 game server running at http://localhost:${port}`);
 });
